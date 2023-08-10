@@ -112,6 +112,15 @@ class OrderListScreen extends GetView<OrderListController> {
               ),
             ),
           ),
+          SliverToBoxAdapter(
+            child: Container(
+              width: double.maxFinite,
+              height: 760.h,
+              child: Table(
+
+              ),
+            ),
+          )
         ],
       ),
     ));
