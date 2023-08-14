@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         designSize: Responsive.isMobile(context)?Size(360, 720): Responsive.isTablet(context)?Size(1000, 800): Size(1600, 877),
       builder: (context, child) {
         return GetMaterialApp(
+          navigatorKey: Get.key,
           debugShowCheckedModeBanner: false,
           title: 'Restaurant Admin',
           theme: appTheme.light,

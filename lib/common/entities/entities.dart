@@ -7,3 +7,4 @@ export 'user.dart';
 export 'location.dart';
 export 'status_card.dart';
 export 'customer_review.dart';
+export 'order.dart';
