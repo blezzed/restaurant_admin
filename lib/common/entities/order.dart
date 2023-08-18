@@ -6,58 +6,54 @@ enum StatusOrder {newOrder, onDelivery, delivered}
 
 class OrderModel {
   int? id;
-  String? name;
-  String? lastName;
+  UserData? customer;
   String? location;
   Rx<StatusOrder> status = StatusOrder.newOrder.obs;
   DateTime date = DateTime.now();
-  List<ProductModel> product = [];
+  List<CartModel> cart = [];
 
   OrderModel(
       {required this.id,
-        required this.name,
-        required this.lastName,
+        required this.customer,
         this.location,
         required this.status,
         required this.date,
-        required this.product,
+        required this.cart,
       });
 
   OrderModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
-    lastName = json['lastName'];
+    customer = UserData.fromJson(json['customer']);
     location = json['location'];
-    status = json['status'];
-    date = json['date'] as DateTime;
-    product = productFromJsonList(json);
+    status.value = StatusOrder.values[json['status']];
+    date =  DateTime.parse(json['date']);
+    cart = cartFromJsonList(json);
   }
 
   Map<String, dynamic> toJson(){
     return {
       "id":id,
-      "name":name,
-      "lastName":lastName,
+      "customer":customer!.toJson(),
       "location":location,
-      "status":status,
+      "status":status.value.index,
       "date":date.toString(),
-      "product":productJsonList(),
+      "cart":cartJsonList(),
     };
   }
 
-  List<ProductModel> productFromJsonList (Map<String, dynamic> json){
-    List<ProductModel> _productList = [];
-    json["product"].forEach((e) {
-      _productList.add(ProductModel.fromJson(e));
+  List<CartModel> cartFromJsonList (Map<String, dynamic> json){
+    List<CartModel> _cartList = [];
+    json["cart"].forEach((e) {
+      _cartList.add(CartModel.fromJson(e));
     });
-    return _productList;
+    return _cartList;
   }
 
-  List productJsonList (){
-    List _productList = [];
-    product.forEach((e) {
-      _productList.add(e.toJson());
+  List cartJsonList (){
+    List _cartList = [];
+    cart.forEach((e) {
+      _cartList.add(e.toJson());
     });
-    return _productList;
+    return _cartList;
   }
 }

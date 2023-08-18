@@ -17,4 +17,6 @@ class AppRoutes{
   static const String AddFood = "/add_food";
 
   static const String FoodDetails = "/food_details";
+
+  static const String OrderDetails = "/order_details";
 }

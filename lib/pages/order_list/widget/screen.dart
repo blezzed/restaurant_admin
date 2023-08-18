@@ -15,7 +15,6 @@ class OrderListScreen extends GetView<OrderListController> {
     var tableHeaderStyle = Theme.of(context).textTheme.labelSmall!.copyWith(
                               fontSize: 12.sp,
                               color: Theme.of(context).scaffoldBackgroundColor);
-    var tableCellStyle = Theme.of(context).textTheme.labelSmall!.copyWith( fontSize: 12.sp,);
 
     return Obx(() => Scaffold(
       body: CustomScrollView(
@@ -51,9 +50,15 @@ class OrderListScreen extends GetView<OrderListController> {
                               color: AppColors.paraColor
                           ),
                           children: <TextSpan>[
-                            TextSpan(text: '3 ', style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColors.textGrey.withOpacity(0.9), fontWeight: FontWeight.bold)),
+                            TextSpan(text: '3 ', style: Theme.of(context).textTheme.labelSmall!
+                                .copyWith(
+                                color: AppColors.textGrey.withOpacity(0.9),
+                                fontWeight: FontWeight.bold)),
                             TextSpan(text: 'new orders  ', ),
-                            TextSpan(text: '5 ', style: Theme.of(context).textTheme.labelSmall!.copyWith(color: AppColors.textGrey.withOpacity(0.9), fontWeight: FontWeight.bold)),
+                            TextSpan(text: '5 ', style: Theme.of(context).textTheme.labelSmall!
+                                .copyWith(
+                                color: AppColors.textGrey.withOpacity(0.9),
+                                fontWeight: FontWeight.bold)),
                             TextSpan(text: 'on delivery  ', ),
                           ],
                         ),
@@ -268,9 +273,6 @@ class OrderListScreen extends GetView<OrderListController> {
     ));
   }
 
-  TableRow tableContents (){
-    return TableRow();
-  }
 
   Widget _statusOrderButton(BuildContext context, StatusOrder status){
     var color = status == StatusOrder.newOrder ? Colors.orange:

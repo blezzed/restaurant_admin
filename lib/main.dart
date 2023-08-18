@@ -21,8 +21,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    print(Get.height);
-    print(Get.width);
     return ScreenUtilInit(
         designSize: Responsive.isMobile(context)?Size(360, 720): Responsive.isTablet(context)?Size(1000, 800): Size(1600, 877),
       builder: (context, child) {

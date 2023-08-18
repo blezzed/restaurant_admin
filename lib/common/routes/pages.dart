@@ -6,6 +6,7 @@ import 'package:restaurant_admin/pages/dashboard/index.dart';
 import 'package:restaurant_admin/pages/food_details/index.dart';
 import 'package:restaurant_admin/pages/home/index.dart';
 import 'package:restaurant_admin/pages/menu/index.dart';
+import 'package:restaurant_admin/pages/order_details/index.dart';
 import 'package:restaurant_admin/pages/order_list/index.dart';
 
 import 'routes.dart';
@@ -41,6 +42,12 @@ class AppPages{
       page: () => const OrderListPage(),
       binding: OrderListBinding(),
       transition: Transition.fadeIn
+    ),
+    GetPage(
+        name: AppRoutes.OrderDetails,
+        page: () => const OrderDetailsPage(),
+        binding: OrderDetailsBinding(),
+        transition: Transition.fadeIn
     ),
     GetPage(
       name: AppRoutes.Reservations,
