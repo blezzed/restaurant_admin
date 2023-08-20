@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:restaurant_admin/common/entities/entities.dart';
 import 'package:restaurant_admin/theme.dart';
 
 class TableTile extends StatelessWidget {
-  TableTile({Key? key}) : super(key: key);
+  TableTile({Key? key, required this.reservation}) : super(key: key);
+
+  final ReservationModel reservation;
 
   RxBool expand = false.obs;
   RxDouble height = 130.0.obs;
+
+  RxDouble orderHeight = 360.0.obs;
+
+  RxBool viewOrders = false.obs;
+  RxBool openViewOrders = false.obs;
 
   Widget _buildTable(BuildContext context, {double? tableSize, required int chairs}) {
     var sizeChair = tableSize ?? 20.w;
@@ -69,15 +78,152 @@ class TableTile extends StatelessWidget {
     );
   }
 
+  Widget _buildOrderSection(BuildContext context){
+    var headingTextStyle = Theme.of(context).textTheme.labelMedium!.copyWith(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.bold
+    );
+    return Obx(() => AnimatedContainer(
+      duration: Duration(milliseconds: 500),
+      child: SizedBox(
+        height: orderHeight.value.h,
+        width: double.maxFinite,
+        child: ListView(
+          padding: EdgeInsets.only(top: 0.h),
+          children: [
+            DataTable(
+              dataRowMaxHeight: 80.h,
+              horizontalMargin: 0,
+              columnSpacing: 0,
+              columns: [
+                DataColumn(label: Text("Items", style: headingTextStyle,)),
+                DataColumn(label: Text("Qty", style: headingTextStyle)),
+                DataColumn(label: Text("T-Price", style: headingTextStyle)),
+              ],
+              rows: _createRows(context),
+            ),
+          ],
+        ),
+      ),
+    ));
+  }
+
+  List<DataRow> _createRows(BuildContext context) {
+    return reservation.cart
+        .map((cart) => DataRow(cells: [
+      DataCell(Container(
+        width: 210.w,
+        child: Row(
+          children: [
+            Container(
+              height: 60.h,
+              width: 55.h,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.r),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage(
+                          cart.product!.img!
+                      )
+                  )
+              ),
+            ),
+            SizedBox(width: 10.w,),
+            Padding(
+              padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    cart.product!.category!.name.toUpperCase(),
+                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                        fontSize: 12.sp,
+                        color: Colors.lightBlue
+                    ),
+                  ),
+                  Container(
+                    constraints: BoxConstraints(
+                        maxWidth: 140.w
+                    ),
+                    child: Text(
+                      cart.product!.name!,
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          overflow: TextOverflow.ellipsis
+                      ),
+                    ),
+                  ),
+                  RatingBar.builder(
+                    initialRating: cart.product!.stars!,
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemSize: 15.w,
+                    ignoreGestures: true,
+                    itemPadding: EdgeInsets.symmetric(horizontal: 0.w),
+                    itemBuilder: (context, _) => Icon(
+                      Icons.star,
+                      color: AppColors.yellowColor,
+                      size: 8.w,
+                    ),
+                    onRatingUpdate: (rating) {
+                    },
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      )),
+      DataCell(Container(
+        width: 40.w,
+        child: Center(child: Text(
+            cart.quantity.value.toString(),
+            style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis
+            )
+        )),
+      )),
+      DataCell(Container(
+        width: 60.w,
+        child: Text(
+            "\$" + (cart.quantity.value * cart.product!.price!).toStringAsFixed(2),
+            style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis
+            )
+        ),
+      ))
+    ]))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() => GestureDetector(
       onTap: (){
         expand.value = !expand.value;
-        height.value = expand.isTrue? 200: 130;
+        openViewOrders.value = !openViewOrders.value;
+        if(viewOrders.isTrue){
+          viewOrders.value = false;
+        }
+        height.value = expand.isTrue? 500: 130;
       },
       child: AnimatedContainer(
-        duration: const Duration(seconds: 1),
+        onEnd: (){
+          if(viewOrders.isFalse && openViewOrders.isTrue){
+            viewOrders.value = true;
+          }
+        },
+        duration: const Duration(milliseconds: 500),
         height: height.value.h ,
         margin: EdgeInsets.all(10.h),
         padding: EdgeInsets.all(10.h),
@@ -85,88 +231,93 @@ class TableTile extends StatelessWidget {
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(30.r)
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
           children: [
-            Container(
-              //height: 100.h,
-              padding: EdgeInsets.only(left: 20.w),
-              constraints: BoxConstraints(
-                maxWidth: 220.w
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Linda Jamez",
-                    maxLines: 2,
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                      fontWeight: FontWeight.w700,
-                      overflow: TextOverflow.ellipsis
-                    ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  //height: 100.h,
+                  padding: EdgeInsets.only(left: 20.w),
+                  constraints: BoxConstraints(
+                    maxWidth: 220.w
                   ),
-                  Text(
-                    "BUSINESS",
-                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                        fontSize: 12.sp,
-                        color:Theme.of(context).primaryColor
-                    ),
-                  ),
-                  SizedBox(height: 5.h,),
-                  Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
+                      Text(
+                        "${reservation.customer!.name} ${reservation.customer!.surname}",
+                        maxLines: 2,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          fontWeight: FontWeight.w700,
+                          overflow: TextOverflow.ellipsis
+                        ),
+                      ),
+                      Text(
+                        "${reservation.status.value.name}".toUpperCase(),
+                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                            fontSize: 12.sp,
+                            color:Theme.of(context).primaryColor
+                        ),
+                      ),
+                      SizedBox(height: 5.h,),
+                      Row(
                         children: [
-                          Text(
-                            "4",
-                            style: Theme.of(context).textTheme.labelSmall,
+                          Column(
+                            children: [
+                              Text(
+                                "${reservation.people}",
+                                style: Theme.of(context).textTheme.labelSmall,
+                              ),
+                              Text(
+                                "People",
+                                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                  fontSize: 12.sp,
+                                  color: AppColors.paraColor
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            "People",
-                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                              fontSize: 12.sp,
-                              color: AppColors.paraColor
-                            ),
+                          SizedBox(width: 60.w,),
+                          Column(
+                            children: [
+                              Text(
+                                "${reservation.tableNumber}",
+                                style: Theme.of(context).textTheme.labelSmall,
+                              ),
+                              Text(
+                                "Table",
+                                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                  fontSize: 12.sp,
+                                  color: AppColors.paraColor
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      SizedBox(width: 60.w,),
-                      Column(
-                        children: [
-                          Text(
-                            "2",
-                            style: Theme.of(context).textTheme.labelSmall,
+                      SizedBox(height: 8.h,),
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 7.w),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: Theme.of(context).primaryColor.withAlpha(50),
+                        ),
+                        child: Text(
+                          "${reservation.slot}",
+                          style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                            fontSize: 12.sp
                           ),
-                          Text(
-                            "Table",
-                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                              fontSize: 12.sp,
-                              color: AppColors.paraColor
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      )
                     ],
                   ),
-                  SizedBox(height: 8.h,),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 7.w),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      color: Theme.of(context).primaryColor.withAlpha(50),
-                    ),
-                    child: Text(
-                      "18:00 - 19:00",
-                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                        fontSize: 12.sp
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                ),
+                _buildTable(context, chairs: reservation.people!),
+              ],
             ),
-            _buildTable(context, chairs: 4),
+            viewOrders.isTrue? _buildOrderSection(context): SizedBox(),
           ],
         ),
       ),
@@ -228,4 +379,9 @@ class HalfCircleClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
 
+}
+
+extension on VoidCallback {
+  Future<void> delayed(Duration duration) =>
+      Future.delayed(duration, this);
 }

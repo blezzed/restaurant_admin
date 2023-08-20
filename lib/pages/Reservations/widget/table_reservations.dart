@@ -6,20 +6,24 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:restaurant_admin/pages/Reservations/index.dart';
 import 'package:restaurant_admin/pages/Reservations/widget/widget.dart';
 
-class TableReservations extends StatelessWidget {
+class TableReservations extends GetView<ReservationsController> {
   const TableReservations({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
+    return Obx(() => CustomScrollView(
       slivers: [
         SliverAppBar(
           toolbarHeight: 180.h,
           backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(50.r))
+          ),
           title: EasyDateTimeLine(
             initialDate: DateTime.now(),
             onDateChange: (selectedDate) {
-              //[selectedDate] the new date selected.
+              print(selectedDate);
+              controller.renderReservationList(selectedDate);
             },
             activeColor: Theme.of(context).primaryColor,
             headerProps: const EasyHeaderProps(
@@ -38,13 +42,13 @@ class TableReservations extends StatelessWidget {
         ),
         SliverList(
           delegate: SliverChildBuilderDelegate(
-            childCount: 3,
+            childCount: controller.state.reservationTitleList.length,
                 (context, index) {
-              return TableTile();
+              return controller.state.reservationTitleList[index];
             },
           ),
         )
       ],
-    );
+    ));
   }
 }

@@ -55,6 +55,7 @@ dependencies:
   fl_chart: ^0.63.0
   percent_indicator: ^4.2.3
   easy_date_timeline: ^0.0.7
+  table_calendar: ^3.0.9
 
   intl: ^0.18.1
 

@@ -106,7 +106,7 @@ class ReservationsScreen extends GetView<ReservationsController> {
                         controller: controller.tabController,
                         children: [
                           TableReservations(),
-                          Center(child: Text("events")),
+                          EventReservations(),
                         ],
                       ),
                     ),
