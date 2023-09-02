@@ -45,7 +45,7 @@ class FoodDetailsPage extends GetView<FoodDetailsController> {
                       "Detail Menus",
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
-                    Spacer(flex: 3,),
+                    const Spacer(flex: 3,),
                     Text(
                       "Category: ",
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(
@@ -228,7 +228,7 @@ class FoodDetailsPage extends GetView<FoodDetailsController> {
               child: TabBarView(
                 controller: controller.tabController,
                 children: [
-                  AboutTab(),
+                  const AboutTab(),
                   ReviewTab(),
                   RevenueTab(),
                 ],

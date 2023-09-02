@@ -10,23 +10,23 @@ import 'package:restaurant_admin/theme.dart';
 class ReservationsScreen extends GetView<ReservationsController> {
   const ReservationsScreen({Key? key}) : super(key: key);
 
-  Widget _tabBar(BuildContext context){
+  Widget _tabBar(BuildContext context) {
     return TabBar(
       labelPadding: EdgeInsets.only(left: 15.w, right: 15.w),
       dividerColor: Theme.of(context).scaffoldBackgroundColor,
       controller: controller.tabController,
       labelColor: Colors.black,
-      labelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(
-          fontWeight: FontWeight.w600,
-          fontSize: 14.sp
-      ),
+      labelStyle: Theme.of(context)
+          .textTheme
+          .labelMedium!
+          .copyWith(fontWeight: FontWeight.w600, fontSize: 14.sp),
       unselectedLabelColor: Colors.grey,
       unselectedLabelStyle: Theme.of(context).textTheme.labelSmall,
       isScrollable: true,
       indicatorSize: TabBarIndicatorSize.label,
       splashBorderRadius: BorderRadius.circular(20.r),
       indicator:
-      LineTabIndicator(color: Theme.of(context).primaryColor, radius: 5),
+          LineTabIndicator(color: Theme.of(context).primaryColor, radius: 5),
       indicatorWeight: 1,
       tabs: controller.tabs,
     );
@@ -42,22 +42,22 @@ class ReservationsScreen extends GetView<ReservationsController> {
             title: Text(
               "Reservations",
               style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                fontWeight: FontWeight.bold,
-                color:  AppColors.textGrey.withOpacity(0.9)
-              ),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textGrey.withOpacity(0.9)),
             ),
             leading: Material(
               borderRadius: BorderRadius.circular(10.r),
               child: InkWell(
                 borderRadius: BorderRadius.circular(10.r),
-                onTap: (){
+                onTap: () {
                   controller.controlMenu();
                 },
                 child: Container(
                   padding: EdgeInsets.all(12.h),
                   child: SvgPicture.asset(
                     "assets/icons/menu_navigation.svg",
-                    colorFilter: ColorFilter.mode(AppColors.textGrey.withOpacity(0.9), BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                        AppColors.textGrey.withOpacity(0.9), BlendMode.srcIn),
                     height: 14.h,
                   ),
                 ),
@@ -66,19 +66,19 @@ class ReservationsScreen extends GetView<ReservationsController> {
           ),
           SliverToBoxAdapter(
             child: Container(
-              height: 650.h,
+              height: 640.h,
               width: double.maxFinite,
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColorLight.withAlpha(60),
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(50.r))
-              ),
+                  color: Theme.of(context).primaryColorLight.withAlpha(60),
+                  borderRadius:
+                      BorderRadius.only(topLeft: Radius.circular(50.r))),
               child: Stack(
                 children: [
                   Positioned(
                     top: 5.h,
                     left: 30.w,
                     right: 0,
-                    child: Container(
+                    child: SizedBox(
                       height: 40.h,
                       width: double.maxFinite,
                       child: _tabBar(context),
@@ -89,29 +89,26 @@ class ReservationsScreen extends GetView<ReservationsController> {
                     left: 0,
                     right: 0,
                     child: Container(
-                      height: 590.h,
+                      height: 600.h,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        //color: Theme.of(context).primaryColor.withAlpha(30),
-                        gradient: LinearGradient(
-                          colors: [
-                            Theme.of(context).primaryColor.withAlpha(30),
-                            Theme.of(context).primaryColor.withAlpha(40),
+                          //color: Theme.of(context).primaryColor.withAlpha(30),
+                          gradient: LinearGradient(colors: [
+                            Theme.of(context).primaryColor.withAlpha(10),
                             Theme.of(context).primaryColor.withAlpha(20),
-                          ]
-                        ),
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(50.r))
-                      ),
+                            Theme.of(context).primaryColor.withAlpha(10),
+                          ]),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(50.r))),
                       child: TabBarView(
                         controller: controller.tabController,
-                        children: [
+                        children: const [
                           TableReservations(),
                           EventReservations(),
                         ],
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
